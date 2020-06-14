@@ -61,7 +61,7 @@ int main(int argc, char **argv){
 	int *maxArr = new int[hc];
 	int *minArr = new int[hc];
 	if (argc > 3){
-		dif = std::atoi((const char *)argv[3]); //Minimum size of interval, computer: HG201PC11 (intel core i5) can calculate 100.000.000 per thread (max 4) in about 1 minute.
+		dif = std::atoi((const char *)argv[3]);
 		std::cout << "Interval max was set to: " << dif << std::endl;
 	}
 	else{
