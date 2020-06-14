@@ -8,21 +8,22 @@
 
 //Compile with  : g++    -o mult mult.cc -std=c++17 -pthread
 //For debugging : g++ -g -o mult mult.cc -std=c++17 -pthread
+//For extra speed use: c++ -O3 -o mult mult.cc -std=c++17 -pthread
 
 int totalcount = 0;
 std::mutex mtx;
 std::mutex mu;
 
-void findNums(int &i_min, int &i_max, int &thres_ans){
+void findNums(unsigned long &i_min, unsigned long &i_max, int &thres_ans, int &ID){
 	std::unique_lock<std::mutex> ul(mu);
-	std::thread::id ID = std::this_thread::get_id();
+	//std::thread::id ID = std::this_thread::get_id();
 	std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
 	ul.unlock();
 	int ans = 1;
 	int count = 0;
 	int totalCountInside = 0;
 	std::array <char, 10> str;
-	for (unsigned int i = i_min; i <= i_max; i++){
+	for (unsigned long i = i_min; i <= i_max; i++){
 		std::to_chars(str.data(), str.data() + str.size(), i);
 		int i_size = trunc(log10(i))+1;
 		std::string_view str_i(str.data(),i_size);
@@ -32,7 +33,7 @@ void findNums(int &i_min, int &i_max, int &thres_ans){
 		count = 0;
 		do{
 			ans = 1;
-			for (unsigned int j = 0; j < i_size; j++){
+			for (unsigned long j = 0; j < i_size; j++){
 				ans *= (str_i[j]-'0');
 			}
 			std::to_chars(str.data(), str.data() + str.size(), ans);
@@ -44,7 +45,6 @@ void findNums(int &i_min, int &i_max, int &thres_ans){
 			totalCountInside++;
 		}
 	}
-	std::cout << "before waiting " << ID << "\n";
 	ul.lock();
 	std::cout << "Total count = " << totalCountInside << ", ID: " << ID << "\n";
 	totalcount = totalcount + totalCountInside;
@@ -54,14 +54,14 @@ void findNums(int &i_min, int &i_max, int &thres_ans){
 
 int main(int argc, char **argv){
 	std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
-	int hc = std::thread::hardware_concurrency(); //Insures that all cores are used
+	unsigned long hc = std::thread::hardware_concurrency(); //Insures that all cores are used
 	std::thread counters[hc];
 	int dif, a, ta;
 	int *idarr = new int[hc]; //Using arrays in this way really keeps the threads organized properly
-	int *maxArr = new int[hc];
-	int *minArr = new int[hc];
+	unsigned long *maxArr = new unsigned long[hc];
+	unsigned long *minArr = new unsigned long[hc];
 	if (argc > 3){
-		dif = std::atoi((const char *)argv[3]);
+		dif = std::atol((const char *)argv[3]);
 		std::cout << "Interval max was set to: " << dif << std::endl;
 	}
 	else{
@@ -69,7 +69,7 @@ int main(int argc, char **argv){
 		std::cout << "Size of interval set automatically to " << dif << "." << std::endl;
 	}
 	if (argc > 2){
-		minArr[0] = std::atoi((const char *)argv[2]);
+		minArr[0] = std::atol((const char *)argv[2]);
 		std::cout << "Start of interval set to: " << minArr[0] << std::endl;
 	}
 	else{
@@ -77,7 +77,7 @@ int main(int argc, char **argv){
 		std::cout << "Starting point was automatically set to " << minArr[0] << "." << std::endl;
 	}
 	maxArr[0] = floor(dif / hc);
-	for (int idc = 0; idc < hc; idc++){
+	for (unsigned long idc = 0; idc < hc; idc++){
 		idarr[idc] = idc + 1;
 		if (idc > 0){
 			minArr[idc] = maxArr[idc - 1] + 1;
@@ -92,7 +92,7 @@ int main(int argc, char **argv){
 		ta = 9;
 	}
 	for (a = 0; a < hc; a++){
-		counters[a] = std::thread{findNums, std::ref(minArr[a]), std::ref(maxArr[a]), std::ref(ta)};
+		counters[a] = std::thread{findNums, std::ref(minArr[a]), std::ref(maxArr[a]), std::ref(ta), std::ref(idarr[a])};
 	}
 	for (a = 0; a < hc; a++){
 		counters[a].join();
