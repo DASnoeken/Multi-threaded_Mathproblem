@@ -14,15 +14,15 @@ int totalcount = 0;
 std::mutex mtx;
 std::mutex mu;
 
-void findNums(unsigned long &i_min, unsigned long &i_max, int &thres_ans, int &ID){
+void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_ans, unsigned short &ID){
 	std::unique_lock<std::mutex> ul(mu);
 	//std::thread::id ID = std::this_thread::get_id();
 	std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
 	ul.unlock();
-	int ans = 1;
-	int count = 0;
-	int totalCountInside = 0;
-	std::array <char, 10> str;
+	unsigned int ans = 1;
+	unsigned short count = 0;
+	unsigned int totalCountInside = 0;
+	std::array <char, 15> str;
 	for (unsigned long i = i_min; i <= i_max; i++){
 		std::to_chars(str.data(), str.data() + str.size(), i);
 		int i_size = trunc(log10(i))+1;
@@ -54,10 +54,11 @@ void findNums(unsigned long &i_min, unsigned long &i_max, int &thres_ans, int &I
 
 int main(int argc, char **argv){
 	std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
-	unsigned long hc = std::thread::hardware_concurrency(); //Insures that all cores are used
+	unsigned short hc = std::thread::hardware_concurrency()/2; //Insures that all cores are used
 	std::thread counters[hc];
-	int dif, a, ta;
-	int *idarr = new int[hc]; //Using arrays in this way really keeps the threads organized properly
+	unsigned long dif;
+	unsigned short a, ta;
+	unsigned short *idarr = new unsigned short[hc]; //Using arrays in this way really keeps the threads organized properly
 	unsigned long *maxArr = new unsigned long[hc];
 	unsigned long *minArr = new unsigned long[hc];
 	if (argc > 3){
@@ -78,7 +79,7 @@ int main(int argc, char **argv){
 	}
 	maxArr[0] = floor(dif / hc);
 	for (unsigned long idc = 0; idc < hc; idc++){
-		idarr[idc] = idc + 1;
+		idarr[idc] = (short) idc + 1;
 		if (idc > 0){
 			minArr[idc] = maxArr[idc - 1] + 1;
 			maxArr[idc] = floor((idc + 1) * dif / hc);
