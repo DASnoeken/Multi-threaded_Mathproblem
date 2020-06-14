@@ -2,9 +2,7 @@
 #include <cstring>
 #include <cmath>
 #include <thread>
-#include <fstream>
 #include <mutex>
-#include <condition_variable>
 #include <array>
 #include <charconv>
 
@@ -13,8 +11,6 @@
 
 int totalcount = 0;
 std::mutex mtx;
-std::condition_variable cv;
-bool condition = false;
 std::mutex mu;
 
 void findNums(int &i_min, int &i_max, int &thres_ans){
