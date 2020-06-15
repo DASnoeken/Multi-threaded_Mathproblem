@@ -34,9 +34,6 @@ int factorial_sp(unsigned long& j) {
 	for (int i = 0; i < N; i++) {
 		jArr[i] = j / (int)pow(10, i) % 10;
 	}
-	std::vector<int> countVec;
-	int count = 1;
-
 	/*
 	for (int i = 0; i < N; i++) {
 		std::cout << jArr[i] << " ";
@@ -44,16 +41,18 @@ int factorial_sp(unsigned long& j) {
 	std::cout << "\n";
 	*/
 
+	std::vector<int> countVec;
+	int count = 1;
 	for (int i = 1; i < N; i++) {
 		if (jArr[i] == jArr[i - 1]) {
 			count++;
 		}
 		else {
-			countVec.push_back(count);
+			countVec.emplace_back(count);
 			count = 1;
 		}
 	}
-	countVec.push_back(count);
+	countVec.emplace_back(count);
 	int ans = factorial(N);
 	std::vector<int>::iterator iter;
 	for (iter = countVec.begin(); iter != countVec.end(); ++iter) {
