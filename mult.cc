@@ -16,7 +16,6 @@ std::mutex mu;
 
 void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_ans, unsigned short &ID){
 	std::unique_lock<std::mutex> ul(mu);
-	//std::thread::id ID = std::this_thread::get_id();
 	std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
 	ul.unlock();
 	unsigned int ans = 1;
@@ -54,7 +53,7 @@ void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_
 
 int main(int argc, char **argv){
 	std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
-	unsigned short hc = std::thread::hardware_concurrency()/2; //Insures that all cores are used
+	unsigned short hc = std::thread::hardware_concurrency()/2; //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
 	std::thread counters[hc];
 	unsigned long dif;
 	unsigned short a, ta;

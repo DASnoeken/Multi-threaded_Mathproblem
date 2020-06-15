@@ -7,6 +7,9 @@ multi-threading increases the speed by a factor of about 7.4.
 Note: when using the -O3 tag on the compiler, I can get all numbers from 11 to 100.000.000 in 0.8s. On a single thread, it takes about
 5s when the -O3 tag is used.
 
+Also note that maximum hardware_concurrency heats up your CPU as it takes 100% of its capacity. My CPU can reach 95 degrees Celcius
+when 12 threads are used, it is rated for 100 degrees.
+
 ## The math problem explained
 Take any number with multiple digits (i.e. >=10) and multiply all the digits together. Then take the result and multiply all the digits 
 again. Continue this pattern until you reach a single digit number (i.e. result is element of [0,9]). The result of the problem is the
