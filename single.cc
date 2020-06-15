@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 	long number;
 	if (argc != 2) {
 		std::cout << "Need number to check!\n";
-		return 0;
+		return -1;
 	}
 	else {
 		number = std::atol((const char*) argv[1]);

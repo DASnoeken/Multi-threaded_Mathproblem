@@ -5,14 +5,78 @@
 #include <mutex>
 #include <array>
 #include <charconv>
+#include <vector>
 
 //Compile with  : g++    -o mult mult.cc -std=c++17 -pthread
 //For debugging : g++ -g -o mult mult.cc -std=c++17 -pthread
 //For extra speed use: c++ -O3 -o mult mult.cc -std=c++17 -pthread
+// For debug: 290300 numbers with a count value >=9 for 11 999999999
 
 int totalcount = 0;
 std::mutex mtx;
 std::mutex mu;
+int maxInterval;
+
+int factorial(int& N) {
+	if (N == 0 || N == 1) {
+		return 1;
+	}
+	int ans = 1;
+	for (int i = N; i > 1; i--) {
+		ans *= i;
+	}
+	return ans;
+}
+
+int factorial_sp(unsigned long& j) {
+	int N = trunc(log10(j)) + 1;
+	int* jArr = new int[N];
+	for (int i = 0; i < N; i++) {
+		jArr[i] = j / (int)pow(10, i) % 10;
+	}
+	std::vector<int> countVec;
+	int count = 1;
+
+	/*
+	for (int i = 0; i < N; i++) {
+		std::cout << jArr[i] << " ";
+	}
+	std::cout << "\n";
+	*/
+
+	for (int i = 1; i < N; i++) {
+		if (jArr[i] == jArr[i - 1]) {
+			count++;
+		}
+		else {
+			countVec.push_back(count);
+			count = 1;
+		}
+	}
+	countVec.push_back(count);
+	int ans = factorial(N);
+	std::vector<int>::iterator iter;
+	for (iter = countVec.begin(); iter != countVec.end(); ++iter) {
+		ans /= factorial(*iter);
+	}
+	delete[] jArr;
+	return ans;
+}
+
+bool checkNum(std::string_view number) {
+	int tmp = number[0] - '0';
+	int chk;
+	for (unsigned short i = 1; i < number.length(); i++) {
+		chk = number[i] - '0';
+		if (chk < tmp) {
+			return true;
+		}
+		else {
+			tmp = chk;
+		}
+	}
+	return false;
+}
 
 void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_ans, unsigned short &ID){
 	std::unique_lock<std::mutex> ul(mu);
@@ -26,7 +90,11 @@ void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_
 		std::to_chars(str.data(), str.data() + str.size(), i);
 		int i_size = trunc(log10(i))+1;
 		std::string_view str_i(str.data(),i_size);
-		if (str_i.find("5") != std::string::npos && (str_i.find("2") != std::string::npos || str_i.find("4") != std::string::npos || str_i.find("6") != std::string::npos || str_i.find("8") != std::string::npos) || str_i.find("0") != std::string::npos){
+		//bool numchk = checkNum(str_i);
+		if (str_i.find("0") != std::string::npos || 
+			str_i.find("5") != std::string::npos &&
+			(str_i.find("2") != std::string::npos || str_i.find("4") != std::string::npos || str_i.find("6") != std::string::npos || str_i.find("8") != std::string::npos) ||
+			checkNum(str_i)){
 			continue;
 		}
 		count = 0;
@@ -41,11 +109,11 @@ void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_
 			count++;
 		} while (trunc(log10(ans)) + 1 > 1);
 		if (count >= thres_ans){
-			totalCountInside++;
+			totalCountInside += factorial_sp(i);
 		}
 	}
 	ul.lock();
-	std::cout << "Total count = " << totalCountInside << ", ID: " << ID << "\n";
+	//std::cout << "Total count = " << totalCountInside << ", ID: " << ID << "\n";
 	totalcount = totalcount + totalCountInside;
 	ul.unlock();
 
@@ -68,6 +136,7 @@ int main(int argc, char **argv){
 		dif = 100000;
 		std::cout << "Size of interval set automatically to " << dif << "." << std::endl;
 	}
+	maxInterval = dif;
 	if (argc > 2){
 		minArr[0] = std::atol((const char *)argv[2]);
 		std::cout << "Start of interval set to: " << minArr[0] << std::endl;
