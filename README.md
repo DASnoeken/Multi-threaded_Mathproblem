@@ -23,3 +23,5 @@ Take any number with multiple digits (i.e. >=10) and multiply all the digits tog
 again. Continue this pattern until you reach a single digit number (i.e. result is element of [0,9]). The result of the problem is the
 number of times you can multiply numbers together, before you reach the single digit.
 The recordholder number is 277777788888899 which has 11 steps.
+The smallest number with 10 steps is 3778888999.
+Numberphile did a great video on this as well, you can view it here: https://www.youtube.com/watch?v=Wim9WJeDTHQ

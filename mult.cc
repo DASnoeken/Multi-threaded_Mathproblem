@@ -116,9 +116,9 @@ void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned sho
 			count++;
 		} while (trunc(log10(ans)) + 1 > 1);
 		if (count >= thres_ans){
-			ul.lock();
-			std::cout << i << std::endl;
-			ul.unlock();
+			//ul.lock();
+			//std::cout << i << std::endl;
+			//ul.unlock();
 			totalCountInside += factorial_sp(i);
 		}
 	}
