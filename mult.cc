@@ -17,7 +17,7 @@ std::mutex mtx;
 std::mutex mu;
 int maxInterval;
 
-int factorial(int& N) {
+int factorial(const int& N) {
 	if (N == 0 || N == 1) {
 		return 1;
 	}
@@ -28,7 +28,7 @@ int factorial(int& N) {
 	return ans;
 }
 
-int factorial_sp(unsigned long& j) {
+int factorial_sp(const unsigned long& j) {
 	int N = trunc(log10(j)) + 1;
 	int* jArr = new int[N];
 	for (int i = 0; i < N; i++) {
@@ -89,7 +89,6 @@ void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_
 		std::to_chars(str.data(), str.data() + str.size(), i);
 		int i_size = trunc(log10(i))+1;
 		std::string_view str_i(str.data(),i_size);
-		//bool numchk = checkNum(str_i);
 		if (str_i.find("0") != std::string::npos || 
 			str_i.find("5") != std::string::npos &&
 			(str_i.find("2") != std::string::npos || str_i.find("4") != std::string::npos || str_i.find("6") != std::string::npos || str_i.find("8") != std::string::npos) ||
@@ -144,12 +143,14 @@ int main(int argc, char **argv){
 		minArr[0] = 1111;
 		std::cout << "Starting point was automatically set to " << minArr[0] << "." << std::endl;
 	}
-	maxArr[0] = floor(dif / hc);
+	unsigned long intervalSize = dif - minArr[0];
+	maxArr[0] = minArr[0] + floor(intervalSize / hc);
 	for (unsigned long idc = 0; idc < hc; idc++){
 		idarr[idc] = (short) idc + 1;
 		if (idc > 0){
 			minArr[idc] = maxArr[idc - 1] + 1;
-			maxArr[idc] = floor((idc + 1) * dif / hc);
+			maxArr[idc] = minArr[idc] + floor(intervalSize / hc);
+			
 		}
 	}
 	if (argc > 1){
@@ -160,6 +161,7 @@ int main(int argc, char **argv){
 		ta = 9;
 	}
 	for (a = 0; a < hc; a++){
+		//std::cout << a << " ---> " << minArr[a] << " ---> " << maxArr[a] << "\n";
 		counters[a] = std::thread{findNums, std::ref(minArr[a]), std::ref(maxArr[a]), std::ref(ta), std::ref(idarr[a])};
 	}
 	for (a = 0; a < hc; a++){
