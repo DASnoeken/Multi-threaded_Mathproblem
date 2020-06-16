@@ -6,16 +6,18 @@
 #include <array>
 #include <charconv>
 #include <vector>
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
 
 //Compile with  : g++    -o mult mult.cc -std=c++17 -pthread
 //For debugging : g++ -g -o mult mult.cc -std=c++17 -pthread
 //For extra speed use: c++ -O3 -o mult mult.cc -std=c++17 -pthread
 // For debug: 290300 numbers with a count value >=9 for 11 999999999
 
-int totalcount = 0;
-std::mutex mtx;
-std::mutex mu;
-int maxInterval;
+static int totalcount = 0;
+static std::mutex mtx;
+static std::mutex mu;
+static int maxInterval;
 
 int factorial(const int& N) {
 	if (N == 0 || N == 1) {
@@ -29,6 +31,7 @@ int factorial(const int& N) {
 }
 
 int factorial_sp(const unsigned long& j) {
+	//auto t1 = Clock::now();
 	int N = trunc(log10(j)) + 1;
 	int* jArr = new int[N];
 	for (int i = 0; i < N; i++) {
@@ -42,6 +45,7 @@ int factorial_sp(const unsigned long& j) {
 	*/
 
 	std::vector<int> countVec;
+	countVec.reserve(9);
 	int count = 1;
 	for (int i = 1; i < N; i++) {
 		if (jArr[i] == jArr[i - 1]) {
@@ -56,9 +60,14 @@ int factorial_sp(const unsigned long& j) {
 	int ans = factorial(N);
 	std::vector<int>::iterator iter;
 	for (iter = countVec.begin(); iter != countVec.end(); ++iter) {
-		ans /= factorial(*iter);
+		if (*iter != 0 && *iter != 1) {
+			ans /= factorial(*iter);
+		}
 	}
 	delete[] jArr;
+
+	//auto t2 = Clock::now();
+	//std::cout << "Delta t2-t1: " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << '\n';
 	return ans;
 }
 
@@ -77,15 +86,15 @@ bool checkNum(std::string_view number) {
 	return false;
 }
 
-void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_ans, unsigned short &ID){
+void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned short &thres_ans, unsigned short &ID){
 	std::unique_lock<std::mutex> ul(mu);
-	std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
+	//std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
 	ul.unlock();
 	unsigned int ans = 1;
 	unsigned short count = 0;
 	unsigned int totalCountInside = 0;
 	std::array <char, 15> str;
-	for (unsigned long i = i_min; i <= i_max; i++){
+	for (unsigned long long i = i_min; i <= i_max; i++){
 		std::to_chars(str.data(), str.data() + str.size(), i);
 		int i_size = trunc(log10(i))+1;
 		std::string_view str_i(str.data(),i_size);
@@ -107,6 +116,9 @@ void findNums(unsigned long &i_min, unsigned long &i_max, unsigned short &thres_
 			count++;
 		} while (trunc(log10(ans)) + 1 > 1);
 		if (count >= thres_ans){
+			ul.lock();
+			std::cout << i << std::endl;
+			ul.unlock();
 			totalCountInside += factorial_sp(i);
 		}
 	}
@@ -121,11 +133,11 @@ int main(int argc, char **argv){
 	std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
 	unsigned short hc = std::thread::hardware_concurrency()/2; //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
 	std::thread counters[hc];
-	unsigned long dif;
+	unsigned long long dif;
 	unsigned short a, ta;
 	unsigned short *idarr = new unsigned short[hc]; //Using arrays in this way really keeps the threads organized properly
-	unsigned long *maxArr = new unsigned long[hc];
-	unsigned long *minArr = new unsigned long[hc];
+	unsigned long long *maxArr = new unsigned long long[hc];
+	unsigned long long*minArr = new unsigned long long[hc];
 	if (argc > 3){
 		dif = std::atol((const char *)argv[3]);
 		std::cout << "Interval max was set to: " << dif << std::endl;
@@ -143,10 +155,10 @@ int main(int argc, char **argv){
 		minArr[0] = 1111;
 		std::cout << "Starting point was automatically set to " << minArr[0] << "." << std::endl;
 	}
-	unsigned long intervalSize = dif - minArr[0];
+	unsigned long long intervalSize = dif - minArr[0];
 	maxArr[0] = minArr[0] + floor(intervalSize / hc);
-	for (unsigned long idc = 0; idc < hc; idc++){
-		idarr[idc] = (short) idc + 1;
+	for (unsigned short idc = 0; idc < hc; idc++){
+		idarr[idc] = idc + 1;
 		if (idc > 0){
 			minArr[idc] = maxArr[idc - 1] + 1;
 			maxArr[idc] = minArr[idc] + floor(intervalSize / hc);
@@ -160,6 +172,7 @@ int main(int argc, char **argv){
 		std::cout << "Printing threshold automatically set to 9!" << std::endl;
 		ta = 9;
 	}
+	std::cout << hc << " Threads will be started!" << '\n';
 	for (a = 0; a < hc; a++){
 		//std::cout << a << " ---> " << minArr[a] << " ---> " << maxArr[a] << "\n";
 		counters[a] = std::thread{findNums, std::ref(minArr[a]), std::ref(maxArr[a]), std::ref(ta), std::ref(idarr[a])};

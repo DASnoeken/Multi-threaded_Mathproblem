@@ -22,5 +22,4 @@ you wish to check as input.
 Take any number with multiple digits (i.e. >=10) and multiply all the digits together. Then take the result and multiply all the digits 
 again. Continue this pattern until you reach a single digit number (i.e. result is element of [0,9]). The result of the problem is the
 number of times you can multiply numbers together, before you reach the single digit.
-Apparently, nobody has ever found a number, such that this result equals 10 or higher. Also from my tests, I cannot find any number 
-such that the result is either 10 or above. It always seems to max out at 9.
+The recordholder number is 277777788888899 which has 11 steps.

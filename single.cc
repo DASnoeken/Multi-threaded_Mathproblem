@@ -4,8 +4,8 @@
 #include <array>
 #include <charconv>
 
-int checkNum(long& num) {
-	unsigned int ans = 1;
+int checkNum(unsigned long long& num) {
+	unsigned long long ans = 1;
 	std::array <char, 25> str;
 	std::to_chars(str.data(), str.data() + str.size(), num);
 	int i_size = trunc(log10(num)) + 1;
@@ -26,13 +26,13 @@ int checkNum(long& num) {
 }
 
 int main(int argc, char** argv) {
-	long number;
+	unsigned long long number;
 	if (argc != 2) {
 		std::cout << "Need number to check!\n";
 		return -1;
 	}
 	else {
-		number = std::atol((const char*) argv[1]);
+		number = std::atoll((const char*) argv[1]);
 	}
 	std::cout << "Number picked: " << number << "\n";
 	int result = checkNum(number);
