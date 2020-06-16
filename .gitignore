@@ -2,3 +2,5 @@
 *.exe
 *.o
 *.stackdump
+python/thirdparty/pybind11
+python/build
