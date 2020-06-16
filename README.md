@@ -1,10 +1,10 @@
 # Multi-threaded Mathproblem
 This repository contains a brute-force attempt at a certain math problem. The point here however, is to show some multithreaded code
 that is working together with string_view in C++. On my personal laptop (MSI GL65 9SD, Intel Core i7-9750H (6 cores, 12 threads), it 
-can check all numbers 11 to 100.000.000 in about 1.9s. The same settings for a single thread takes 14.3s. So the application of
+can check all numbers 11 to 100,000,000 in about 1.9s. The same settings for a single thread takes 14.3s. So the application of
 multi-threading increases the speed by a factor of about 7.5.
 
-Note: when using the -O3 tag on the compiler, I can get all numbers from 11 to 100.000.000 in 0.5s. On a single thread, it takes about
+Note: when using the -O3 tag on the compiler, I can get all numbers from 11 to 100,000,000 in 0.5s. On a single thread, it takes about
 3s when the -O3 tag is used.
 
 Also note that maximum hardware_concurrency heats up your CPU as it takes 100% of its capacity. My CPU can reach 95 degrees Celcius

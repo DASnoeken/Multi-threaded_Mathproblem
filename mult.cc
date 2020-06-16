@@ -19,7 +19,7 @@ static std::mutex mtx;
 static std::mutex mu;
 static int maxInterval;
 
-int factorial(const int& N) {
+int factorial(const int& N) {							//Calculates N!
 	if (N == 0 || N == 1) {
 		return 1;
 	}
@@ -30,7 +30,7 @@ int factorial(const int& N) {
 	return ans;
 }
 
-int factorial_sp(const unsigned long& j) {
+int factorial_sp(const unsigned long long& j) {			//Calculates N!/(P!Q!R!...)
 	//auto t1 = Clock::now();
 	int N = trunc(log10(j)) + 1;
 	int* jArr = new int[N];
@@ -45,7 +45,7 @@ int factorial_sp(const unsigned long& j) {
 	*/
 
 	std::vector<int> countVec;
-	countVec.reserve(9);
+	countVec.reserve(N);
 	int count = 1;
 	for (int i = 1; i < N; i++) {
 		if (jArr[i] == jArr[i - 1]) {
@@ -71,7 +71,7 @@ int factorial_sp(const unsigned long& j) {
 	return ans;
 }
 
-bool checkNum(std::string_view number) {
+bool checkNum(std::string_view number) {			//We only need to check combinations of digits once. 39 has the same result as 93, now only 39 is checked and 93 is skipped
 	int tmp = number[0] - '0';
 	int chk;
 	for (unsigned short i = 1; i < number.length(); i++) {
@@ -86,17 +86,17 @@ bool checkNum(std::string_view number) {
 	return false;
 }
 
-void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned short &thres_ans, unsigned short &ID){
+void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned short &thres_ans, unsigned short &ID){ //The core function of the program
 	std::unique_lock<std::mutex> ul(mu);
 	//std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
 	ul.unlock();
 	unsigned int ans = 1;
 	unsigned short count = 0;
 	unsigned int totalCountInside = 0;
-	std::array <char, 15> str;
+	std::array <char, 25> str;
 	for (unsigned long long i = i_min; i <= i_max; i++){
 		std::to_chars(str.data(), str.data() + str.size(), i);
-		int i_size = trunc(log10(i))+1;
+		long i_size = trunc(log10(i))+1;
 		std::string_view str_i(str.data(),i_size);
 		if (str_i.find("0") != std::string::npos || 
 			str_i.find("5") != std::string::npos &&
@@ -131,7 +131,7 @@ void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned sho
 
 int main(int argc, char **argv){
 	std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
-	unsigned short hc = std::thread::hardware_concurrency()/2; //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
+	unsigned short hc = std::thread::hardware_concurrency(); //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
 	std::thread counters[hc];
 	unsigned long long dif;
 	unsigned short a, ta;
