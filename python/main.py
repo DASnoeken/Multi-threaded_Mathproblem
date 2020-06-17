@@ -1,0 +1,13 @@
+import mult
+a=mult.Mult()
+print(help(a))
+print("\nShould give 11 steps:")
+a.single("277777788888899")
+print("\nShould give 10 steps:")
+a.single("3778888999")
+print("\nChecking interval:")
+a.interval(11,100000000,9,6)
+print("\nError checks")
+a.interval(12,10,9,6)
+a.interval(10,1000,9,0)
+a.interval(10,1000,0,4)

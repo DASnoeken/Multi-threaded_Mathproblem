@@ -88,7 +88,7 @@ bool checkNum(std::string_view number) {			//We only need to check combinations 
 
 void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned short &thres_ans, unsigned short &ID){ //The core function of the program
 	std::unique_lock<std::mutex> ul(mu);
-	//std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
+	std::cout << "Thread with ID " << ID << " started! i_min=" << i_min << ". i_max = " << i_max << "\n";
 	ul.unlock();
 	unsigned int ans = 1;
 	unsigned short count = 0;
@@ -131,7 +131,7 @@ void findNums(unsigned long long &i_min, unsigned long long &i_max, unsigned sho
 
 int main(int argc, char **argv){
 	std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
-	unsigned short hc = std::thread::hardware_concurrency(); //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
+	unsigned short hc = std::thread::hardware_concurrency()/2; //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
 	std::thread counters[hc];
 	unsigned long long dif;
 	unsigned short a, ta;
@@ -139,7 +139,7 @@ int main(int argc, char **argv){
 	unsigned long long *maxArr = new unsigned long long[hc];
 	unsigned long long*minArr = new unsigned long long[hc];
 	if (argc > 3){
-		dif = std::atol((const char *)argv[3]);
+		dif = std::atol((const char *)argv[2]);
 		std::cout << "Interval max was set to: " << dif << std::endl;
 	}
 	else{
@@ -148,7 +148,7 @@ int main(int argc, char **argv){
 	}
 	maxInterval = dif;
 	if (argc > 2){
-		minArr[0] = std::atol((const char *)argv[2]);
+		minArr[0] = std::atol((const char *)argv[1]);
 		std::cout << "Start of interval set to: " << minArr[0] << std::endl;
 	}
 	else{
@@ -166,7 +166,7 @@ int main(int argc, char **argv){
 		}
 	}
 	if (argc > 1){
-		ta = std::atoi((const char *)argv[1]); //Printing threshold value for count variable in findNums().
+		ta = std::atoi((const char *)argv[3]); //Printing threshold value for count variable in findNums().
 	}
 	else{
 		std::cout << "Printing threshold automatically set to 9!" << std::endl;

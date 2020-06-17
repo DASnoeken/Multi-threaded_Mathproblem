@@ -23,6 +23,7 @@ public:
 		unsigned long long number;
 		std::cout << "\033[1;32mPlease note that your input should not exceed: " << ULLONG_MAX << "\033[0m" << std::endl;
 		const char* input = inputNumber.c_str();
+		std::cout << input << std::endl;
 		char* iEnd;
 		number = std::strtoull(input, &iEnd, 10);
 		if (number == ULLONG_MAX) {
@@ -39,6 +40,18 @@ public:
 	}
 
 	void interval(unsigned long long minimum, unsigned long long maxInterval,unsigned short threshold,int numThreads) {
+		if (numThreads <= 0) {
+			std::cout << "\033[1;31mIllegal number of threads!\033[0m" << std::endl;
+			return;
+		}
+		if (threshold <= 1) {
+			std::cout << "\033[1;31mIllegal threshold value!\033[0m" << std::endl;
+			return;
+		}
+		if (minimum<0 || minimum>=maxInterval) {
+			std::cout << "\033[1;31mIllegal interval bounds!\033[0m" << std::endl;
+			return;
+		}
 		std::cout << "\033[1;32mNOTE\033[0m Maximum number of threads should not exceed " << std::thread::hardware_concurrency() << " on this machine." << std::endl;
 		unsigned short hc = numThreads; //Amount of threads used. Don't make this number too high, because that will harm efficiency. 
 		if (hc > std::thread::hardware_concurrency()) {
@@ -104,7 +117,7 @@ private:
 	}
 
 	int s_checkNum(unsigned long long& num) {
-		unsigned int ans = 1;
+		unsigned long long ans = 1;
 		std::array <char, 25> str;
 		std::to_chars(str.data(), str.data() + str.size(), num);
 		int i_size = trunc(log10(num)) + 1;
@@ -112,7 +125,7 @@ private:
 		int count = 0;
 		do {
 			ans = 1;
-			for (int j = 0; j < i_size; j++) {
+			for (unsigned int j = 0; j < i_size; j++) {
 				ans *= (str_i[j] - '0');
 			}
 			std::to_chars(str.data(), str.data() + str.size(), ans);

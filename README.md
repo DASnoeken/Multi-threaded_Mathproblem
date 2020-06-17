@@ -10,9 +10,9 @@ Note: when using the -O3 tag on the compiler, I can get all numbers from 11 to 1
 Also note that maximum hardware_concurrency heats up your CPU as it takes 100% of its capacity. My CPU can reach 95 degrees Celcius
 when 12 threads are used, it is rated for 100 degrees.
 
-The program takes 3 optional arguments. The first is a threshold value you want to look for, this is the minimum number of steps a
-certain number needs to be included in your final result. The second is the lower bound of the interval you want to check and the third
-is the upper bound of this interval.
+The program takes 3 optional arguments. The first is the lower bound of the interval you want to check. The second is the upper bound of 
+this interval and the third is a threshold value you want to look for, this is the minimum number of steps a certain number needs to be 
+included in your final result.
 
 ## Single
 The single program is able to check a single number and will also print all the steps for this particular number. It takes the number
