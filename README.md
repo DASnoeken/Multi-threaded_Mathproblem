@@ -14,7 +14,7 @@ The program takes 3 optional arguments. The first is the lower bound of the inte
 this interval and the third is a threshold value you want to look for, this is the minimum number of steps a certain number needs to be 
 included in your final result.
 
-In order to get the python library working, you need to set up pybind11 yourself in a directory: python/thirdparty/pybind11.
+In order to get the python library working, you need to set up pybind11 (https://github.com/pybind/pybind11) yourself in a directory: python/thirdparty/pybind11.
 
 ## Single
 The single program is able to check a single number and will also print all the steps for this particular number. It takes the number
