@@ -96,15 +96,29 @@ private:
 	std::mutex mu;
 	int maxInterval = 0;
 
-	int s_checkNum(const std::string& num) {
-		unsigned int ans = 1;
+	int s_checkNum(const std::string& num) {	//This part of the code doesn't have to be efficient
+		unsigned long long ans = 1;
+		unsigned long long ans2 = ans;
 		int count = 0;
-		std::string num2 = num;
+		std::string num2 = num;		
 		std::cout << "\033[1;31mWARNING! I'm doing something very dangerous right now!\nI have no idea if this is an effective way of treating large numbers like this!\033[0m" << '\n';
+		std::cout << num2 << std::endl;
+		/*std::vector<int> v_num;
+		v_num.reserve(num.length());
+		for (int j = 0; j < num.length(); j++) {
+			v_num.emplace_back(num2[j] - '0');
+		}*/
 		do {
 			ans = 1;
+			ans2 = ans;
 			for (int j = 0; j < num2.length(); j++) {
 				ans *= (num2[j] - '0');
+				if (ans < ans2 && (num2[j] - '0')>=1) {
+					std::cout << "WARNING! Suspicious behavior! "<< j << ": " <<ans<<" < "<<ans2<< std::endl;
+					std::cout << "I\'m not able to do this number at this point." << std::endl;
+					return -1;
+				}
+				ans2 = ans;
 			}
 			if (ans == ULLONG_MAX) {
 				std::cout << "\033[1;31mWARNING! First step generated ULLONG_MAX, answer might be incorrect!\033[0m" << '\n';

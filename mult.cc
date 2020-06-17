@@ -140,7 +140,7 @@ int main(int argc, char **argv){
 	unsigned long long*minArr = new unsigned long long[hc];
 	if (argc > 3){
 		dif = std::atol((const char *)argv[2]);
-		std::cout << "Interval max was set to: " << dif << std::endl;
+		std::cout << "Interval max was set to:  " << dif << std::endl;
 	}
 	else{
 		dif = 100000;
