@@ -116,6 +116,7 @@ private:
 				if (ans < ans2 && (num2[j] - '0')>=1) {
 					std::cout << "WARNING! Suspicious behavior! "<< j << ": " <<ans<<" < "<<ans2<< std::endl;
 					std::cout << "I\'m not able to do this number at this point." << std::endl;
+					std::cout << "You can use the python implementation instead. It handles large numbers really well." << std::endl;
 					return -1;
 				}
 				ans2 = ans;
